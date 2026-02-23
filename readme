@@ -1,0 +1,2 @@
+pip install "langgraph-cli[inmem]"
+pip install deepagents langchain langchain_mcp_adapters
