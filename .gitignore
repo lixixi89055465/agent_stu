@@ -3,3 +3,4 @@ out
 .idea
 .langgraph_api
 .env
+agent.egg-info
