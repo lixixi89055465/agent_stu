@@ -1,14 +1,26 @@
+from langchain.chat_models import init_chat_model
+from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_openai import ChatOpenAI
+from openai import api_key, base_url
 
 from agent.env_utils import ALIBABA_API_KEY, ALIBABA_BASE_URL
 
-llm = ChatOpenAI(  # 调用大模型
-    model="qwen3-max",
-    temperature=0.6,
-    api_key=ALIBABA_API_KEY,
-    base_url=ALIBABA_BASE_URL
-)
-DEFAULT_SUMMARY_PROMPT="""
+# llm = ChatOpenAI(  # 调用大模型
+#     model="qwen3-max",
+#     temperature=0.6,
+#     api_key=ALIBABA_API_KEY,
+#     base_url=ALIBABA_BASE_URL
+# )
+from langchain_deepseek import ChatDeepSeek
+
+#
+# llm = ChatDeepSeek(
+#     model_name="deepseek-v3.2-exp",
+#     temperature=0.5,
+#     api_key=ALIBABA_API_KEY,
+#     api_base=ALIBABA_BASE_URL
+# )
+DEFAULT_SUMMARY_PROMPT = """
 <角色>
 上下文提取助手
 </角色>
@@ -62,3 +74,22 @@ system_prompt = '''
 - 如果无法确定用户意图，或问题模糊，应主动询问澄清。
 - 对于超出你知识范围或工具能力的问题，如实告知，不要编造信息。
 '''
+
+# llm = ChatOpenAI(
+#     model_name="deepseek-v3.2-exp",
+#     temperature=0.5,
+#     api_key=ALIBABA_API_KEY,
+#     api_base=ALIBABA_BASE_URL
+# )
+rate_limiter = InMemoryRateLimiter(
+    requests_per_second=0.1,  # 每10秒1个请求
+    check_every_n_seconds=10.1,  # 每100毫秒检查一次是否允许发出请求
+    max_bucket_size=10,  # 控制最大突发请求数量
+)
+llm = init_chat_model(
+    model="deepseek-r1-0528",
+    model_provider="openai",
+    api_key=ALIBABA_API_KEY,
+    base_url=ALIBABA_BASE_URL,
+    rate_limiter=rate_limiter,
+)

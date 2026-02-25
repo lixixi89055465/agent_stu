@@ -1,2 +1,3 @@
 pip install "langgraph-cli[inmem]"  deepagents langchain langchain_mcp_adapters langchain-openai langchain-anthropic dotenv
 python == 3.13
+pip install langchain_deepseek
