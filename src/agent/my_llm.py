@@ -1,9 +1,10 @@
+from zhipuai import ZhipuAI
 from langchain.chat_models import init_chat_model
 from langchain_core.rate_limiters import InMemoryRateLimiter
 from langchain_openai import ChatOpenAI
 from openai import api_key, base_url
 
-from agent.env_utils import ALIBABA_API_KEY, ALIBABA_BASE_URL
+from agent.env_utils import ALIBABA_API_KEY, ALIBABA_BASE_URL, ZHIPU_API_KEY
 
 # llm = ChatOpenAI(  # 调用大模型
 #     model="qwen3-max",
@@ -93,3 +94,5 @@ llm = init_chat_model(
     base_url=ALIBABA_BASE_URL,
     rate_limiter=rate_limiter,
 )
+
+zhipuai_client=ZhipuAI(api_key=ZHIPU_API_KEY)
