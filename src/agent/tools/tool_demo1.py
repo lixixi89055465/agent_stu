@@ -8,13 +8,14 @@ from agent.my_llm import zhipuai_client
 
 @tool('my_web_search', parse_docstring=True)
 def web_search(query: str) -> str:
-    '''
-    互联网搜索的工具，可以搜索所有公开的信息。
+    """ 互联网搜索的工具，可以搜索所有公开的信息。
+
     Args:
-        qury:需要进行互联网查询的信息。
+        query: 需要进行互联网查询的信息。
+
     Returns:
         返回搜索的结果信息，该信息是一个文本字符串
-    '''
+    """
     try:
         resp = zhipuai_client.web_search.web_search(
             search_engine='search_pro',
@@ -37,3 +38,12 @@ class SearchArgs(BaseModel):
 @tool('my_web_search', args_schema=SearchArgs, description='互联网搜索的工具，可以搜索所有公开的信息')
 def web_search2(query: str) -> str:
     pass
+
+
+if __name__ == '__main__':
+    print(web_search.name)  # 工具的名字
+    print(web_search.description)
+    print(web_search.args)
+    print(web_search.args_schema.model_json_schema())
+    result = web_search.invoke({'query': '如何使用langchain'})
+    print(result)

@@ -1,0 +1,9 @@
+from langchain.agents import create_agent
+from agent.my_llm import llm
+from agent.tools.tool_demo1 import web_search
+
+agent=create_agent(
+    llm,
+    tools=[web_search],
+    system_prompt="你是一个智能助手,尽可能的调用工具回答用户的问题"
+)
