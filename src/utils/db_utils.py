@@ -1,10 +1,9 @@
 from typing import List, Optional, Dict, Any
 
-from dns.e164 import query
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from agent.utils.log_utils import log
+from utils.log_utils import log
 
 
 class MySQLDatabaseManager:

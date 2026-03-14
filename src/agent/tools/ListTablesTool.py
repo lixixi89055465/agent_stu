@@ -1,13 +1,11 @@
 import asyncio
-from typing import Optional, List, Any
+from typing import Optional, List
 
 from langchain_core.tools import BaseTool
 from pydantic import Field, create_model
-from scripts.regsetup import description
-from watchfiles import awatch
 
-from agent.utils.db_utils import MySQLDatabaseManager
-from agent.utils.log_utils import log
+from utils.db_utils import MySQLDatabaseManager
+from utils.log_utils import log
 
 
 class ListTablesTool(BaseTool):
