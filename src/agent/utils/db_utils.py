@@ -53,7 +53,7 @@ class MySQLDatabaseManager:
             log.exception(e)
             raise ValueError(f"获取表名及描述信息失败：{str(e)}")
 
-    def get_table_scheme(self, table_names: Optional[List[str]] = None) -> str:
+    def get_table_schema(self, table_names: Optional[List[str]] = None) -> str:
         '''
                获取指定表的模式信息（包含字段注释/主键/外键/索引）
         Args:
@@ -153,10 +153,26 @@ class MySQLDatabaseManager:
 
 
 if __name__ == '__main__':
-    DB_CONFIG = {
-        "host": "localhost",
-        "port": 3306,
-        "username": "root",
-        "password": "123123",
-        "database": "test_db4",
-    }
+    host = "localhost"
+    port = 3306
+    username = "root"
+    password = "123456"
+    database = "nl_to_sql_db"
+    connection_string = f"mysql+pymysql://{username}:{password}@{host}/{database}?charset=utf8"
+    manager = MySQLDatabaseManager(connection_string)
+
+    # 测试表名及描述
+    tables_info = manager.get_tables_with_comments()
+    print(tables_info)
+
+    # 测试表结构
+    schema = manager.get_table_schema(['student_info'])
+    print(schema)
+
+    # 测试SQL预处理
+    sql_safe = manager.preprocess_sql("SELECT id FROM student_info")
+    print(sql_safe)
+
+    # 测试SQL执行
+    result = manager.execute_sql("SELECT id FROM student_info")
+    print(result)

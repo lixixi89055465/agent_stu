@@ -4,7 +4,7 @@ from loguru import logger
 root_dir = os.path.dirname(os.path.abspath(__file__))
 log_dir = os.path.join(root_dir, 'logs')  # 存放项目日志目录的绝对路径
 if not os.path.exists(log_dir):  # 存放项目日志目录的绝对路径
-    os.makedir(log_dir)
+    os.makedirs(log_dir)
 
 
 # LOG_FILE = "translation.log"  # 存储日志的文件
