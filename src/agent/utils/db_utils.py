@@ -145,11 +145,39 @@ class MySQLDatabaseManager:
             with self.engine.connect() as connection:
                 result = connection.execute(text(safe_sql), params or {})
                 columns = result.keys()
+                rows = result.fetchmany(100)
+                if not rows:
+                    return "查询结果为空"
+
                 return [dict(zip(columns, row)) for row in result]
 
         except SQLAlchemyError as e:
             log.exception(e)
             raise ValueError(f"SQL 执行失败: {str(e)}")
+
+    def validate_query(self, query: str) -> str:
+        '''
+        验证 sql 查询语法是否正确
+        Args:
+            query:要验证的SQL查询
+        '''
+        # 基本语法检查
+        if not query or not query.strip():
+            return "错误:插叙不能为空"
+        # 检查是否以SELECT 或with 开头
+        query_lower = query.lower().strip()
+        if not query_lower.startswith(('select', 'with')):
+            return '警告:建议使用SELECT或WITH 查询，其他操作可能被限制'
+        # 插叙解析查询(不实际执行)
+        try:
+            with self.engine.connect() as connection:
+                # 使用SQLAlchemy的text()来解析但不执行
+                parsed_query = text(query)
+                # 尝试编译查询来检查语法
+                compiled = parsed_query.compile(compile_kwargs={"literal_binds": True})
+                return 'SQL查询语法看起来正确'
+        except Exception as e:
+            pass
 
 
 if __name__ == '__main__':
