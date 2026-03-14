@@ -3,7 +3,7 @@ from typing import List, Optional, Dict, Any
 from sqlalchemy import create_engine, inspect, text
 from sqlalchemy.exc import SQLAlchemyError
 
-from utils.log_utils import log
+from agent.utils.log_utils import log
 
 
 class MySQLDatabaseManager:

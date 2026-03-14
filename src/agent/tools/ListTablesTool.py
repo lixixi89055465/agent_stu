@@ -4,8 +4,8 @@ from typing import Optional, List
 from langchain_core.tools import BaseTool
 from pydantic import Field, create_model
 
-from utils.db_utils import MySQLDatabaseManager
-from utils.log_utils import log
+from agent.utils.db_utils import MySQLDatabaseManager
+from agent.utils.log_utils import log
 
 
 class ListTablesTool(BaseTool):
@@ -23,6 +23,8 @@ class ListTablesTool(BaseTool):
                 table_comment = table_info['table_comment']
                 description_display = table_comment if table_comment and not table_comment.isspace() else "(暂无描述)"
                 result += f"{i + 1}. 表名：{table_name}\n 描述：{description_display}\n\n"
+            log.error(result)
+            return result
         except Exception as e:
             log.exception(e)
             return f'列出表时出错:{str(e)}'
@@ -73,6 +75,7 @@ class SQLQueryTool(BaseTool):
     def _run(self, query: str) -> str:
         try:
             result = self.db_manager.execute_sql(query)
+            log.error(f"{query}--11111111111111--{result}")
             return str(result)
         except Exception as e:
             log.exception(e)
