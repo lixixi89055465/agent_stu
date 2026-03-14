@@ -30,20 +30,20 @@ def web_search(query: str) -> str:
         return f'Error :{e}'
 
 
-class SearchArgs(BaseModel):
-    query: str = Field(..., description='需要尽心互联网查询的查询信息')
-    second: int = Field(..., description='第二个参数')
+# class SearchArgs(BaseModel):
+#     query: str = Field(..., description='需要尽心互联网查询的查询信息')
+#     second: int = Field(..., description='第二个参数')
 
 
-@tool('my_web_search', args_schema=SearchArgs, description='互联网搜索的工具，可以搜索所有公开的信息')
-def web_search2(query: str) -> str:
-    pass
+# @tool('my_web_search', args_schema=SearchArgs, description='互联网搜索的工具，可以搜索所有公开的信息')
+# def web_search2(query: str) -> str:
+#     pass
 
 
-if __name__ == '__main__':
-    print(web_search.name)  # 工具的名字
-    print(web_search.description)
-    print(web_search.args)
-    print(web_search.args_schema.model_json_schema())
-    result = web_search.invoke({'query': '如何使用langchain'})
-    print(result)
+# if __name__ == '__main__':
+#     print(web_search.name)  # 工具的名字
+#     print(web_search.description)
+#     print(web_search.args)
+#     print(web_search.args_schema.model_json_schema())
+#     result = web_search.invoke({'query': '如何使用langchain'})
+#     print(result)

@@ -1,4 +1,5 @@
-from my_agent1 import agent
+from agent.my_agent2 import my_agent
+
 __all__ = [
-    "agent"
+    "my_agent"
 ]
