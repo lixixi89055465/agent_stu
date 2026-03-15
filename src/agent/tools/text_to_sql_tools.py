@@ -45,7 +45,7 @@ class TableSchemaTool(BaseTool):
             "TableSchemaToolArgs",
             # table_names=(Optional[List[str]], Field(..., description='表名列表')),
             table_names=(
-            Optional[List[str]], Field(..., description='用逗号分隔的表名列表，例如：t_usermodel,t_rolemodel'))
+                Optional[List[str]], Field(..., description='用逗号分隔的表名列表，例如：t_usermodel,t_rolemodel'))
 
         )
 

@@ -147,8 +147,10 @@ class MySQLDatabaseManager:
                 rows = result.fetchmany(100)
                 if not rows:
                     return "查询结果为空"
+                a = [dict(zip(columns, row)) for row in rows]
+                log.error(f"333333333333333{str(a)}")
+                return a
 
-                return [dict(zip(columns, row)) for row in result]
 
         except SQLAlchemyError as e:
             log.exception(e)

@@ -50,3 +50,11 @@ agent = create_agent(
     tools=tools,
     system_prompt=system_prompt
 )
+
+if __name__ == '__main__':
+    for step in agent.stream(
+            input={
+                "messages": [{"role": "user", "content": "数据库中有多少个部门，每个部门都有哪些员工?"}]},
+            stream_mode="values"
+    ):
+        step['messages'][-1].pretty_print()  # 打印
