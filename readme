@@ -37,7 +37,7 @@ python == 3.13
 pip install langchain_deepseek
 pip install sqlalchemy pymysql loguru
 pip install langchain_ollama
-
+pip install grandalf
 
 python -m pip install -e .
 
