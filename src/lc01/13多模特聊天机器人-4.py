@@ -73,7 +73,7 @@ final_chain = RunnablePassthrough.assign(
     input=lambda x: x['input'],
     chat_history=lambda x: x['messages_summarized']['original_messages'],
     system_message=lambda x: f"你是一个乐于助人的助手。尽你所能回答所有的问题。摘要:{x['messages_summarized']['summary']}"
-)
+) | chain_with_message_history
 
 # result1=final_chain.invoke({
 #     'input':'你好，我是蔡锷',
