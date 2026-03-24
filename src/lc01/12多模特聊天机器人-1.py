@@ -51,7 +51,7 @@ def summarize_messages(current_input):
         'chat_history': messages_to_summarize
     })
     # 重建历史记录：摘要+最后2条原始消息
-    chat_history.clear()
+    # chat_history.clear()
     chat_history.add_message(summary_messages)
     for msg in last_two_messages:
         chat_history.add_message(msg)
@@ -60,18 +60,22 @@ def summarize_messages(current_input):
 # 最终的链
 # RunnablePassthrough 默认会将输入数据原样传递到下游，而assign()方法
 # 允许在保留原始输入的同时，通过指定键值对（如essages_summarized=summarize_messages)
-# final_chain=(RunnablePassthrough.assign(messages_summarized=summarize_messages)|chain_with_message_history)
+final_chain=(RunnablePassthrough.assign(
+    messages_summarized=summarize_messages)|chain_with_message_history)
 
-result1=chain_with_message_history.invoke({
-    'input':'你好，我是张学良'
-},config={'configurable':{'session_id':"user123"}})
-print(result1)
-result2=chain_with_message_history.invoke({
-    'input':'我的名字叫什么?'
-},config={'configurable':{'session_id':"user123"}})
-print(result2)
+# result1=final_chain.invoke({
+#     'input':'你好，我是蔡锷',
+#     "config":{'configurable':{'session_id':"user123"}}
+# },config={'configurable':{'session_id':"user123"}})
+# print(result1)
+# result2=chain_with_message_history.invoke({
+#     'input':'我的名字叫什么?'
+# ,'config':{'configurable':{'session_id':"user123"}}
+# },config={'configurable':{'session_id':"user123"}})
+# print(result2)
 result3=chain_with_message_history.invoke({
     'input':'历史上，和我同名的人有哪些'
+,'config':{'configurable':{'session_id':"user123"}}
 },config={'configurable':{'session_id':"user123"}})
 print(result3)
 
