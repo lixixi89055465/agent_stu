@@ -39,6 +39,8 @@ pip install sqlalchemy pymysql loguru
 pip install langchain_ollama
 pip install grandalf
 
+pip install gradio==5.31.0
+
 python -m pip install -e .
 
 langgraph dev

@@ -4,6 +4,7 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
 
 from agent.my_llm import llm
+import gradio as gr
 
 # 提示词模板
 prompt = ChatPromptTemplate.from_messages([
@@ -92,3 +93,19 @@ result3 = chain_with_message_history.invoke({
     , 'config': {'configurable': {'session_id': "user123"}}
 }, config={'configurable': {'session_id': "user123"}})
 print(result3)
+# 开发一个聊天机器人的web界面
+with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as block:
+    # 聊天历史记录的组件
+    chatbot = gr.Chatbot(type='messages', height=500, label='聊天机器人')
+    with gr.Row():
+        # 文字输入的区域
+        with gr.Column(scale=4):
+            user_input = gr.Textbox(placeholder='请给机器人发送消息...',
+                                    label='文字输入', max_lines=5)
+            submit_btn = gr.Button('发送消息', variant='primary')
+        with gr.Column(scale=1):
+            audio_input = gr.Audio(sources=['microphone'], label='语音输入',
+                                   type='filepath', format='wav')
+
+if __name__ == '__main__':
+    block.launch()
