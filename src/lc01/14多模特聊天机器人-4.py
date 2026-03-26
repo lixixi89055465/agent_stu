@@ -93,6 +93,24 @@ result3 = chain_with_message_history.invoke({
     , 'config': {'configurable': {'session_id': "user123"}}
 }, config={'configurable': {'session_id': "user123"}})
 print(result3)
+
+
+def execute_chain(chat_history):
+    input = chat_history[-1]
+    result = final_chain.invoke(
+        {'input': input, 'config': {'configurable': {'session_id': 'user123'}}},
+        config={'configurable': {'session_id': 'user123'}}
+    )
+    chat_history.append({'role': 'assistant', 'content': result.content})
+    return chat_history
+
+
+def add_message(chat_history, user_message):
+    if user_message:
+        chat_history.append({'role': 'user', 'content': user_message})
+    return chat_history, ''
+
+
 # 开发一个聊天机器人的web界面
 with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as block:
     # 聊天历史记录的组件
@@ -106,6 +124,8 @@ with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as bloc
         with gr.Column(scale=1):
             audio_input = gr.Audio(sources=['microphone'], label='语音输入',
                                    type='filepath', format='wav')
+    chat_msg = user_input.submit(add_message, [chatbot, user_input], [chatbot, user_input])
+    chat_msg.then(execute_chain, chatbot, chatbot)
 
 if __name__ == '__main__':
     block.launch()
