@@ -2,7 +2,9 @@
 from langchain_community.chat_message_histories import SQLChatMessageHistory, ChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnableWithMessageHistory, RunnablePassthrough
+from zhipuai import ZhipuAI
 
+from agent.env_utils import ZHIPU_API_KEY
 from agent.my_llm import llm
 import gradio as gr
 
@@ -108,7 +110,28 @@ def execute_chain(chat_history):
 def add_message(chat_history, user_message):
     if user_message:
         chat_history.append({'role': 'user', 'content': user_message})
-    return chat_history, ''
+    return chat_history, gr.Textbox(value=None, interactive=False)
+
+
+client = ZhipuAI(api_key=ZHIPU_API_KEY)
+
+
+def read_audio(audio_message):
+    '''读取音频文件'''
+    print(audio_message)
+    if audio_message:
+        with open(audio_message, 'rb') as audio_file:
+            transcriptResponse = client.audio.transcriptions.create(
+                model='glm-asr',
+                file=audio_file,
+                stream=False
+            )
+            # print(transcriptResponse.model_extra['text'])
+            print('4' * 100)
+            print(transcriptResponse)
+            text = transcriptResponse.model_extra['text']
+            return text
+    return gr.Textbox(value=None, interactive=False)
 
 
 # 开发一个聊天机器人的web界面
@@ -124,8 +147,17 @@ with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as bloc
         with gr.Column(scale=1):
             audio_input = gr.Audio(sources=['microphone'], label='语音输入',
                                    type='filepath', format='wav')
+    # 文本框提交的事件
     chat_msg = user_input.submit(add_message, [chatbot, user_input], [chatbot, user_input])
     chat_msg.then(execute_chain, chatbot, chatbot)
+    # 语音输入框的改变事件
+    audio_input.change(read_audio, [audio_input], [user_input])
+    # 按钮点击的事件
+    submit_btn.click(add_message, [chatbot, user_input], [chatbot, user_input]).then(
+        add_message,
+        [chatbot, user_input],
+        [chatbot, user_input],
+    ).then(execute_chain, chatbot, chatbot)
 
 if __name__ == '__main__':
     block.launch()
