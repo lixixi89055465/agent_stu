@@ -96,3 +96,9 @@ llm = init_chat_model(
 )
 
 zhipuai_client=ZhipuAI(api_key=ZHIPU_API_KEY)
+
+multiModal_llm=ChatOpenAI(
+    model="qwen2.5-omni-7b",
+    api_key=ALIBABA_API_KEY,
+    base_url=ALIBABA_BASE_URL,
+)
