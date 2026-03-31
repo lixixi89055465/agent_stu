@@ -49,16 +49,16 @@ def get_session_history(session_id: str):
 
 def add_message(chat_history, user_message):
     ''' 将用户输入的消息添加到聊天记录中'''
-    # for m in user_message['files']:
-    #     print(m)
-    #     chat_history.append({'role': 'user', 'content': {'path': m}})
-    # # 处理文本消息
-    # if user_message['text'] is not None:
-    #     chat_history.append({'role': 'user', 'content': {'text': user_message['text']}})
-    # return chat_history, gr.MultimodalTextbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
-    if user_message:
-        chat_history.append({'role': 'user', 'content': user_message})
-    return chat_history, gr.Textbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
+    for m in user_message['files']:
+        print(m)
+        chat_history.append({'role': 'user', 'content': {'path': m}})
+    # 处理文本消息
+    if user_message['text'] is not None:
+        chat_history.append({'role': 'user', 'content': {'text': user_message['text']}})
+    return chat_history, gr.MultimodalTextbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
+    # if user_message:
+    #     chat_history.append({'role': 'user', 'content': user_message})
+    # return chat_history, gr.Textbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
 
 
 # 语音处理函数=====
@@ -120,11 +120,16 @@ def submit_messages(history):
             elif isinstance(x['content'], tuple):  # 多媒体输入消息
                 file_path = x['content'][0]  # 得到多媒体的文件路径
                 if file_path.endswith('.wav'):  # 输入的是音频文件
-                    pass
+                    file_message = transcribe_audio(file_path)
                 elif file_path.endswith('.jpg') or file_path.endswith('.png') or file_path.endswith('.jpeg'):
-                    pass
+                    file_message = transcribe_image(file_path)
+                content.append(file_message)
             else:
                 pass
+    input_message = HumanMessage(content=content)
+    resp = chain_history.invoke({'messages': input_message}, config)
+    history.append({'role': 'assistant', 'content': resp['content']})
+    return history
 
 
 chain_history = RunnableWithMessageHistory(
@@ -133,10 +138,10 @@ chain_history = RunnableWithMessageHistory(
 )
 config = {'configurable': {'session_id': str(uuid.uuid4())}}
 
-user_msg = HumanMessage(content=[{'type': 'text', 'text': '你知道机器学习是什么意思吗'}])
-resp1 = chain_history.invoke(input={'message': [user_msg]}, config=config)
-print('1' * 100)
-print(resp1.content)
+# user_msg = HumanMessage(content=[{'type': 'text', 'text': '你知道机器学习是什么意思吗'}])
+# resp1 = chain_history.invoke({'message': [user_msg]}, config)
+# print('1' * 100)
+# print(resp1.content)
 
 with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as block:
     # 聊天历史记录的组件
@@ -155,7 +160,15 @@ with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as bloc
         [chatbot, chat_input],
         [chatbot, chat_input]
     ).then(
-        submit_messages,
+        lambda h, _: submit_messages(h),
         [chatbot],
         [chatbot]
+    ).then(
+        lambda: gr.MultimodalTextbox(interactive=True),  # 匿名函数重置输入值
+        None,  # 无 输入 0
+        [chat_input]
+
     )
+
+if __name__ == '__main__':
+    block.launch()
