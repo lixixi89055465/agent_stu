@@ -1,3 +1,5 @@
+from logging import exception
+
 from zhipuai import ZhipuAI
 from langchain.chat_models import init_chat_model
 from langchain_core.rate_limiters import InMemoryRateLimiter
@@ -13,6 +15,8 @@ from agent.env_utils import ALIBABA_API_KEY, ALIBABA_BASE_URL, ZHIPU_API_KEY
 #     base_url=ALIBABA_BASE_URL
 # )
 from langchain_deepseek import ChatDeepSeek
+
+# from agent.text_to_sql_agent import password
 
 #
 # llm = ChatDeepSeek(
@@ -95,10 +99,109 @@ llm = init_chat_model(
     rate_limiter=rate_limiter,
 )
 
-zhipuai_client=ZhipuAI(api_key=ZHIPU_API_KEY)
+zhipuai_client = ZhipuAI(api_key=ZHIPU_API_KEY)
 
-multiModal_llm=ChatOpenAI(
-    model="qwen2.5-omni-7b",
+multiModal_llm = ChatOpenAI(
+    # model="qwen2.5-omni-7b",
+    model="qwen3.5-omni-plus",
     api_key=ALIBABA_API_KEY,
     base_url=ALIBABA_BASE_URL,
 )
+
+import os
+from openai import OpenAI
+import base64
+import numpy as np
+import soundfile as sf
+import requests
+
+client = OpenAI(
+    # 若没有配置环境变量，请用阿里云百炼API Key将下行替换为：api_key="sk-xxx",
+    # 新加坡和北京地域的API Key不同。获取API Key：https://help.aliyun.com/zh/model-studio/get-api-key
+    api_key=os.getenv("ALIBABA_API_KEY"),
+    # 以下是北京地域base_url，如果使用新加坡地域的模型，需要将base_url替换为：https://dashscope-intl.aliyuncs.com/compatible-mode/v1
+    base_url=os.getenv("ALIBABA_BASE_URL"),
+)
+
+
+def encode_audio(audio_path):
+    with open(audio_path, "rb") as audio_file:
+        return base64.b64encode(audio_file.read()).decode("utf-8")
+
+
+# base64_audio = encode_audio("welcome.mp3")
+
+# completion = client.chat.completions.create(
+#     model="qwen3.5-omni-plus",  # 模型为Qwen3-Omni-Flash时，请在非思考模式下运行
+#     messages=[
+#         {
+#             "role": "user",
+#             "content": [
+#                 {
+#                     "type": "input_audio",
+#                     "input_audio": {
+#                         "data": f"data:;base64,{base64_audio}",
+#                         "format": "mp3",
+#                     },
+#                 },
+#                 {"type": "text", "text": "这段音频在说什么"},
+#             ],
+#         },
+#     ],
+#     # 设置输出数据的模态，当前支持两种：["text","audio"]、["text"]
+#     modalities=["text", "audio"],
+#     audio={"voice": "Tina", "format": "wav"},
+#     # stream 必须设置为 True，否则会报错
+#     stream=True,
+#     stream_options={"include_usage": True},
+# )
+
+# for chunk in completion:
+#     if chunk.choices:
+#         print(chunk.choices[0].delta)
+#     else:
+#         print(chunk.usage)
+
+# https://help.aliyun.com/zh/model-studio/what-is-model-studio
+def get_content_fromAudio(audio_path):
+    try:
+        base64_audio = encode_audio(audio_path)
+
+        completion = client.chat.completions.create(
+            model="Qwen3.5-Omni",  # 模型为Qwen3-Omni-Flash时，请在非思考模式下运行
+            messages=[
+                {
+                    "role": "user",
+                    "content": [
+                        {
+                            "type": "input_audio",
+                            "input_audio": {
+                                "data": f"data:;base64,{base64_audio}",
+                                "format": "mp3",
+                            },
+                        },
+                        {"type": "text", "text": "这段音频在说什么"},
+                    ],
+                },
+            ],
+            # 设置输出数据的模态，当前支持两种：["text","audio"]、["text"]
+            modalities=["text", "audio"],
+            audio={"voice": "Tina", "format": "wav"},
+            # stream 必须设置为 True，否则会报错
+            stream=True,
+            stream_options={"include_usage": True},
+        )
+        print('1' * 100)
+        for chunk in completion:
+            if chunk.choices:
+                print(chunk.choices[0].delta)
+            else:
+                print(chunk.usage)
+        pass
+    except Exception as e:
+        print(e)
+        pass
+
+
+if __name__ == '__main__':
+    get_content_fromAudio('src/agent/audio.wav')

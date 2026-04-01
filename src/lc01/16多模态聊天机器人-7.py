@@ -47,15 +47,15 @@ def get_session_history(session_id: str):
     )
 
 
-def add_message(chat_history, user_message):
+def add_message(history, messages):
     ''' 将用户输入的消息添加到聊天记录中'''
-    for m in user_message['files']:
+    for m in messages['files']:
         print(m)
-        chat_history.append({'role': 'user', 'content': {'path': m}})
+        history.append({'role': 'user', 'content': {'path': m}})
     # 处理文本消息
-    if user_message['text'] is not None:
-        chat_history.append({'role': 'user', 'content': {'text': user_message['text']}})
-    return chat_history, gr.MultimodalTextbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
+    if messages['text']:
+        history.append({'role': 'user', 'content': messages['text']})
+    return history, gr.MultimodalTextbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
     # if user_message:
     #     chat_history.append({'role': 'user', 'content': user_message})
     # return chat_history, gr.Textbox(value=None, interactive=False)  # 返回更新后的历史和重置的输入框
@@ -72,13 +72,27 @@ def transcribe_audio(audio_path):
     try:
         with open(audio_path, 'rb') as audio_file:
             audio_data = base64.b64encode(audio_file.read()).decode('utf-8')
-        audio_message = {  # 把音频文件，封装成一条消息
-            'type': 'audio_url',
-            'audio_url': {
-                'url': f'data:audio/mp3;base64,{audio_data}',
-                'duration': 30  # 单位：秒（帮助模型优化处理）
+        # audio_message = {  # 把音频文件，封装成一条消息
+        #     'type': 'audio_url',
+        #     'audio_url': {
+        #         'url': f'data:audio/wav;base64,{audio_data}',
+        #         'duration': 30  # 单位：秒（帮助模型优化处理）
+        #     }
+        # }
+        audio_message = [
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "video_url",
+                        "video_url": {
+                            "url": audio_data
+                        }
+                    },
+                    {"type": "text", "text": "翻译成文字"},
+                ]
             }
-        }
+        ]
         return audio_message
 
     except Exception as e:
@@ -121,9 +135,10 @@ def submit_messages(history):
                 file_path = x['content'][0]  # 得到多媒体的文件路径
                 if file_path.endswith('.wav'):  # 输入的是音频文件
                     file_message = transcribe_audio(file_path)
+                    content.append(file_message)
                 elif file_path.endswith('.jpg') or file_path.endswith('.png') or file_path.endswith('.jpeg'):
                     file_message = transcribe_image(file_path)
-                content.append(file_message)
+                    content.append(file_message)
             else:
                 pass
     input_message = HumanMessage(content=content)
@@ -138,10 +153,10 @@ chain_history = RunnableWithMessageHistory(
 )
 config = {'configurable': {'session_id': str(uuid.uuid4())}}
 
-# user_msg = HumanMessage(content=[{'type': 'text', 'text': '你知道机器学习是什么意思吗'}])
-# resp1 = chain_history.invoke({'message': [user_msg]}, config)
-# print('1' * 100)
-# print(resp1.content)
+user_msg = HumanMessage(content=[{'type': 'text', 'text': '你知道机器学习是什么意思吗'}])
+resp1 = chain_history.invoke({'messages': user_msg}, config)
+print('1' * 100)
+print(resp1.content)
 
 with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as block:
     # 聊天历史记录的组件
@@ -160,7 +175,7 @@ with gr.Blocks(title='多模态聊天机器人', theme=gr.themes.Soft()) as bloc
         [chatbot, chat_input],
         [chatbot, chat_input]
     ).then(
-        lambda h, _: submit_messages(h),
+        submit_messages,
         [chatbot],
         [chatbot]
     ).then(

@@ -1,5 +1,5 @@
 from typing import List
-from langchain.agents import create_agent
+# from langchain.agents import create_agent
 from langchain_core.tools import BaseTool
 from sqlalchemy.testing import db
 
@@ -45,16 +45,16 @@ system_prompt = """
     # dialect=db.dialect,
     top_k=5
 )
-agent = create_agent(
-    llm,
-    tools=tools,
-    system_prompt=system_prompt
-)
+# agent = create_agent(
+#     llm,
+#     tools=tools,
+#     system_prompt=system_prompt
+# )
 
-if __name__ == '__main__':
-    for step in agent.stream(
-            input={
-                "messages": [{"role": "user", "content": "数据库中有多少个部门，每个部门都有哪些员工?"}]},
-            stream_mode="values"
-    ):
-        step['messages'][-1].pretty_print()  # 打印
+# if __name__ == '__main__':
+#     for step in agent.stream(
+#             input={
+#                 "messages": [{"role": "user", "content": "数据库中有多少个部门，每个部门都有哪些员工?"}]},
+#             stream_mode="values"
+#     ):
+#         step['messages'][-1].pretty_print()  # 打印
