@@ -43,5 +43,5 @@ pip install gradio==5.31.0
 pip install "uvicorn<0.24.0"
 
 python -m pip install -e .
-
+pip install dashscope==1.25.15
 langgraph dev

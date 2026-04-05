@@ -168,7 +168,7 @@ def get_content_fromAudio(audio_path):
         base64_audio = encode_audio(audio_path)
 
         completion = client.chat.completions.create(
-            model="Qwen3.5-Omni",  # 模型为Qwen3-Omni-Flash时，请在非思考模式下运行
+            model="qwen3.5-omni-plus",  # 模型为Qwen3-Omni-Flash时，请在非思考模式下运行
             messages=[
                 {
                     "role": "user",
