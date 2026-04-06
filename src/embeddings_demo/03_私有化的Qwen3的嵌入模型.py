@@ -1,6 +1,7 @@
 from sentence_transformers import SentenceTransformer
 
-qwen3_embedding = SentenceTransformer('Qwen/Qwen3-Embedding-0.6B')
+# qwen3_embedding = SentenceTransformer('Qwen/Qwen3-Embedding-0.6B')
+qwen3_embedding = SentenceTransformer('Qwen/Qwen3-Embedding-4B')
 
 resp = qwen3_embedding.encode([
     "I like large language models",

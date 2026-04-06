@@ -31,7 +31,7 @@ try:
     mime_type, base64_data = file_to_base64(audio_file_path)
 
     # 4. 构建消息体
-    # 注意：data 字段直接填入 base64 字符串，不需要加 "data:audio/mp3;base64," 前缀
+    # 注意：datas 字段直接填入 base64 字符串，不需要加 "datas:audio/mp3;base64," 前缀
     messages = [
         {
             "role": "user",

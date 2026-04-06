@@ -5,3 +5,5 @@ out
 .env
 agent.egg-info
 __pycache__
+.venv
+.github

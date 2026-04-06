@@ -75,7 +75,7 @@ def transcribe_audio(audio_path):
         # audio_message = {  # 把音频文件，封装成一条消息
         #     'type': 'audio_url',
         #     'audio_url': {
-        #         'url': f'data:audio/wav;base64,{audio_data}',
+        #         'url': f'datas:audio/wav;base64,{audio_data}',
         #         'duration': 30  # 单位：秒（帮助模型优化处理）
         #     }
         # }

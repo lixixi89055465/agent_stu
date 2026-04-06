@@ -4,7 +4,8 @@ from langchain.embeddings import HuggingFaceBgeEmbeddings
 # pip install  huggingface_hub langchain-huggingface
 # HF_HOME=指定下载目录
 
-model_name = 'BAAI/bge-small-zh-v1.5'
+# model_name = 'BAAI/bge-small-zh-v1.5'
+model_name = 'BAAI/bge-big-zh-v1.5'
 model_kwargs = {'device': 'cpu'}
 encode_kwargs = {'normalize_embeddings': True}
 bge_hf_embedding = HuggingFaceBgeEmbeddings(

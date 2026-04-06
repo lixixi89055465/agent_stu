@@ -140,7 +140,7 @@ def encode_audio(audio_path):
 #                 {
 #                     "type": "input_audio",
 #                     "input_audio": {
-#                         "data": f"data:;base64,{base64_audio}",
+#                         "datas": f"datas:;base64,{base64_audio}",
 #                         "format": "mp3",
 #                     },
 #                 },
@@ -176,7 +176,7 @@ def get_content_fromAudio(audio_path):
                         {
                             "type": "input_audio",
                             "input_audio": {
-                                "data": f"data:;base64,{base64_audio}",
+                                "datas": f"datas:;base64,{base64_audio}",
                                 "format": "mp3",
                             },
                         },
