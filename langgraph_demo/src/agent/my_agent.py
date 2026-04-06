@@ -2,6 +2,7 @@ from langchain_openai import ChatOpenAI
 from langgraph.prebuilt import create_react_agent
 
 from agent.env_utils import OPENAI_BASE_URL, OPENAI_API_KEY, ALIBABA_API_KEY, ALIBABA_BASE_URL
+from agent.tools.tool_demo6 import runnable_tool
 
 llm = ChatOpenAI(
     model='qwen-turbo',
@@ -21,9 +22,8 @@ def get_weather(city: str) -> str:
 
 graph = create_react_agent(
     llm,
-    tools=[get_weather],
-    prompt='You are a helpful assistant'
+    tools=[get_weather, runnable_tool],
+    prompt='你是一个智能助手，尽可能的调用工具回答用户的问题'
 )
-# # 执行智能体，不要要严格的目录结构
-# r1=graph.invoke(input='明天上海的天气')
-# print(r1)
+# 执行智能体，不要要严格的目录结构
+# graph.invoke()
