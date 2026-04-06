@@ -24,3 +24,5 @@ graph = create_react_agent(
     tools=[get_weather],
     prompt='You are a helpful assistant'
 )
+# 执行智能体，不要要严格的目录结构
+graph.invoke()
