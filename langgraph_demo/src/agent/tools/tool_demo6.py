@@ -2,7 +2,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import PromptTemplate
 from pydantic import Field, BaseModel
 
-from agent.my_agent import llm
+from agent.models import llm
 
 prompt = (  # 外层的模板
     PromptTemplate.from_template(
