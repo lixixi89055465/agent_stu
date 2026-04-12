@@ -1,11 +1,14 @@
+from typing import Type
+
+from langchain_core.tools import BaseTool
 from openai import api_key
 from pydantic import BaseModel, Field
 
 from agent.env_utils import ZHIPU_API_KEY
 
-from zhipuai import ZhipuAI
+from zai import ZhipuAiClient
 
-zhipuai_client = ZhipuAI(api_key=ZHIPU_API_KEY)
+from agent.models import zhipuai_client
 
 
 class SearchArgs(BaseModel):
@@ -13,12 +16,12 @@ class SearchArgs(BaseModel):
 
 
 # 网络搜索的工具
-class MySearchTool(BaseModel):
+class MySearchTool(BaseTool):
     # 工具名字
-    name = 'search_tool'
-    description = '搜索互联网上公开内容的工具'
-    return_direct = False
-    args_schema = SearchArgs
+    name: str = 'search_tool'
+    description: str = '搜索互联网上公开内容的工具'
+    return_direct: bool = False
+    args_schema: Type[BaseModel] = SearchArgs
 
     def _run(self, query) -> str:
         try:
